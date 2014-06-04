@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//obsługa błyskawic powstających przy potworach po uderzeniu w 'dynamit'
+using UnityEngine;
 
 public class Blyskawica : MonoBehaviour {
 	private float czas=0.5f;	

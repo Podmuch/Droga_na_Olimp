@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Obsługa drugiego widoku menu (wybór rundy)
+using UnityEngine;
 
 public class Wybor : MonoBehaviour {
 	public int numer;

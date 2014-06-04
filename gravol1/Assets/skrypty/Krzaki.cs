@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Typ podłogi, który znika po uderzeniu
+using UnityEngine;
 
 public class Krzaki : MonoBehaviour {
 	public Transform fundament;

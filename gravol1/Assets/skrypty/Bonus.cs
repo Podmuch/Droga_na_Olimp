@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//obsługa bonusów - aktywacja bonusu (przesunięcie na powierchnie)
+// i usunawnie bonusu po zebraniu lub minięciu odpowiedniego czasu
+using UnityEngine;
 
 public class Bonus : MonoBehaviour {
 	private bool widoczny=false;

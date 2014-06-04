@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Przyciski odpowiadające za kierowanie graczem na urządzeniach dotykowych
+//zmienne statyczne określające ruch, każdy przycisk obsługuje swoją zmienną
+using UnityEngine;
 
 public class Przycisk : MonoBehaviour {
 	public static bool lewo=false, prawo=false, skok=false;

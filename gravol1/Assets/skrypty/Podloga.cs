@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Obsługa podłoża - podnoszenie przy uderzeniu i samoczynne opadanie po odpowiednim czasie
+using UnityEngine;
 
 public class Podloga : MonoBehaviour {
 	private bool podbicie=false;

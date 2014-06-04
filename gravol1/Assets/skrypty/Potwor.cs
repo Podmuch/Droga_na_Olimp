@@ -1,3 +1,4 @@
+//Podstawowa klasa potwora (inne potwory po niej dziedziczą) - najprostszy ruch, obsługa śmierci i kolizji
 using UnityEngine;
 using System.Collections;
 

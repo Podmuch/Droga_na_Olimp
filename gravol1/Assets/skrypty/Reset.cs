@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Funkcja uruchamiana przy powrocie gracza do menu - tymczasowa
+using UnityEngine;
 
 public class Reset : MonoBehaviour {
 	void Start () {

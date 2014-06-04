@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//obsługa przycisków w pierwszym widoku menu
+using UnityEngine;
 
 public class Menu : MonoBehaviour {
 

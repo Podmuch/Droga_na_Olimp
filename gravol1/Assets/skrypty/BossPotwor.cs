@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//Pierwszy Boss - obsługa pojawiających się potworów, ruchu bossa oraz śmierci
+using UnityEngine;
 using System.Collections;
 
 public class BossPotwor : Potwor {

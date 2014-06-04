@@ -1,3 +1,5 @@
+//Klasa z internetu (wersja FPSInputController'a w jêzyku C#)
+//z pewnymi modyfikacjami umo¿liwiaj¹cymi ruch graczem za pomoc¹ przycisków na planszy (dla urz¹dzeñ dotykowych)
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +21,8 @@ public class FPSInputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //modyfikacja I - inicjalizacja zmiennych na podstawie statycznych w³aœciwoœci przycisków
+        //je¿eli przycisków nie ma (np w menu) to wszystkie ustawiamy na false
 		bool skok=false, lewo=false, prawo = false;
 		if(FindObjectOfType<Przycisk>()!=null) 
 		{
@@ -46,6 +50,7 @@ public class FPSInputController : MonoBehaviour
             // Multiply the normalized direction vector by the modified length
             directionVector = directionVector * directionLength;
         }
+        //modyfikacja II - je¿eli wektor ruchu jest zerowy (klawiatura nie u¿yta, sprawdzamy czy któryœ z przycisków jest aktywny) 
 		else {
 			directionVector=new Vector3(0,0,(lewo||prawo)?0.5f:0.0f);
 			if (directionVector != Vector3.zero)
@@ -68,6 +73,7 @@ public class FPSInputController : MonoBehaviour
 		}
 		// Apply the direction to the CharacterMotor
 		motor.inputMoveDirection = transform.rotation * directionVector;
+        //modyfikacja III - reakcja na przycisk do skoku
         motor.inputJump = Input.GetButton("Jump")||skok;
     }
 }

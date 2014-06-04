@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Przycisk pozwalający wrócić do menu przed zakończeniem rozgrywki
+using UnityEngine;
 
 public class Powrot : MonoBehaviour {
 

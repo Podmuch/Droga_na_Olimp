@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//Fabryka zarządza respawnem potworów oraz decyduje kiedy następił koniec gry 
+//(gracz stracił wszystkie życia, lub zabito wszystkie potwory)
+using UnityEngine;
 using System.Collections;
 
 public class Fabryka : MonoBehaviour {

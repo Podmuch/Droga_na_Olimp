@@ -1,3 +1,5 @@
+//Skaczący Potwór - klasa pochodna zwykłego potwora
+//zmodyfikowany ruch i inna obsługa animacji
 using UnityEngine;
 using System.Collections;
 

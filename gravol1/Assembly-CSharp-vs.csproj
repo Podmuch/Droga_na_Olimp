@@ -74,9 +74,6 @@
      <None Include="Assets\sciagniete\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\sciagniete\SpartanKing\animations.txt" />
      <None Include="Assets\sciagniete\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
- <Reference Include="UnityEngineProxy">
- <HintPath>Assets\Players\Windows81\X86\release\UnityEngineProxy.dll</HintPath>
- </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

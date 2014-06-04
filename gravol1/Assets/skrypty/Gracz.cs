@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//Gracz
+using UnityEngine;
 
 public class Gracz : MonoBehaviour {
 	//ilosc dynamitu i punktów

@@ -1,5 +1,5 @@
+//Dynamit - obsługa użycia - nieszczenie potworów, pojawianie się i znikanie przy doładowaniu lub zużyciu
 using UnityEngine;
-using System.Collections;
 
 public class Dynamit : MonoBehaviour {
 	public Texture trzy, dwa, jeden;
