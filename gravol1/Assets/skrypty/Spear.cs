@@ -1,5 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//obsługa włóczni
+//pojawiająca się okresowo włócznia przelatująca w poprzek planszy
+//należy jej unikać, gdyż przy kolizji straci się życie (jako ostrzeżenie usłyszymy dźwięk rzutu)
+using UnityEngine;
 
 public class Spear : MonoBehaviour {
 	private bool lot=false, lewo=true;
