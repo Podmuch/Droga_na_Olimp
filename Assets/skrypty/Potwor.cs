@@ -17,7 +17,7 @@ public class Potwor : MonoBehaviour {
 	//momentostrzezenia - czaspodbicia*momentostrzezenia to moment od którego potwor zaczyna ruszac nogami)
 	protected float czaspodbicia=12.0f, minczaspodbicia=5.0f, deltaczaspodbicia=0.5f,
 					czasdowstania=0.0f, czasodbicia=0.1f, opoznienie=0.1f, opoznienieprzysmierci=1.0f,
-					dlugosclotu=1.0f, minimalnyruch=0.0001f, momentostrzezenia=0.25f,
+					dlugosclotu=0.2f, dlugosclotumax=1.0f, minimalnyruch=0.0001f, momentostrzezenia=0.25f,
 					//krance mapy potrzebne do zwijania
 					granicazawijaniaY=100, granicaplanszyY=80, wysokosc=15,
 					lewykraniec=966.5f ,prawykraniec=993.5f, przesuniecie=0.2f,
@@ -36,23 +36,29 @@ public class Potwor : MonoBehaviour {
 		if(!podbicie){
 			//ruch po powtórnym podbiciu
 			if(czasdowstania>0.0f){
-				kontroler.Move(new Vector3(predkosc, skok, 0));
+                //podbicie w zaleznosci od polozenia klocka
+                kontroler.Move(new Vector3(0, skok, 0));
 				czasdowstania-=Time.deltaTime;
 			}
 			//normalny ruch
 			else {
+                //przy odbiciu predkosc musi byc mala, a nie ze zaczyna poruszac sie w poziomie jak przestanie sie wznosic
 				kontroler.Move(new Vector3(predkosc, -grawitacja, 0));
+                if (!animation.isPlaying && kontroler.isGrounded) animation.Play();
+                else if (animation.isPlaying && !kontroler.isGrounded) animation.Stop();
 			}
 		}
 		else {
 			czasdowstania-=Time.deltaTime;
 			//początkowy lot po podbiciu
 			if(czasdowstania>czaspodbicia-dlugosclotu){
-				kontroler.Move(new Vector3(predkosc, skok, 0));
+                //zmienna skok powinna byc usunieta, ruch po okregu odpowiednim (wedlug zmiennej predkosc)
+                kontroler.Move(new Vector3(predkosc * Mathf.Cos(Mathf.PI * (czaspodbicia - czasdowstania) / (3.0f * dlugosclotu)), skok, 0));
 			}
-			//normalny ruch po podbiciu -dzialanie grawitacji oraz umożliwienie zebrania potwora
+			//normalny ruch po podbiciu - dzialanie grawitacji oraz umożliwienie zebrania potwora
 			else {
-				kontroler.Move(new Vector3(minimalnyruch, -grawitacja, 0));
+				if(kontroler.isGrounded)kontroler.Move(new Vector3(minimalnyruch, -grawitacja, 0));
+                else kontroler.Move(new Vector3(predkosc * Mathf.Sin(Mathf.PI * (czaspodbicia-czasdowstania - dlugosclotu)/ (2.0f/3.0f*czaspodbicia) + Mathf.PI/3.0f), -grawitacja, 0));
 				if(czasdowstania<czaspodbicia*momentostrzezenia){
 					animation.Play();
 				}
@@ -89,6 +95,7 @@ public class Potwor : MonoBehaviour {
 					if(predkosc>0)predkosc += deltapredkosc;
 					else predkosc -=deltapredkosc;
 				}
+                if (dlugosclotu < dlugosclotumax) dlugosclotu += 0.1f;
 				if (czaspodbicia >minczaspodbicia) czaspodbicia -= deltaczaspodbicia;
 				predkosc = -predkosc;
 				czasodbicia=opoznienie;
@@ -114,7 +121,6 @@ public class Potwor : MonoBehaviour {
 						czasdowstania=dlugosclotu;
 						//obrót do normalnej pozycji
                         transform.Rotate(-obrotposmierciZ, 0, -obrotposmierciX, 0);
-						animation.Play();
 					}
 					else czasdowstania=czaspodbicia-dlugosclotu;
 				}
@@ -124,7 +130,6 @@ public class Potwor : MonoBehaviour {
 				else if(!umiera)other.SendMessage("smierc");
 				break;
 			case "potwor":
-                //bool predkoscdodatnia = other.GetComponent<Potwor>().predkosc > 0 ? true : false;
 				if(czasodbicia<0.0f&&
 			      ((predkosc>0&&other.bounds.center.x>transform.position.x)||
                     (predkosc < 0 && other.bounds.center.x < transform.position.x)))
