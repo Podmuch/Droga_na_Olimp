@@ -46,34 +46,34 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\sciagniete\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
-     <Compile Include="Assets\sciagniete\Standard Assets\Scripts\General Scripts\ActivateTrigger.cs" />
-     <Compile Include="Assets\skrypty\Blyskawica.cs" />
-     <Compile Include="Assets\skrypty\Bonus.cs" />
-     <Compile Include="Assets\skrypty\BossPotwor.cs" />
-     <Compile Include="Assets\skrypty\CharacterMotor.cs" />
-     <Compile Include="Assets\skrypty\Dynamit.cs" />
-     <Compile Include="Assets\skrypty\FPSInputController.cs" />
-     <Compile Include="Assets\skrypty\Fabryka.cs" />
-     <Compile Include="Assets\skrypty\Gracz.cs" />
-     <Compile Include="Assets\skrypty\Krzaki.cs" />
-     <Compile Include="Assets\skrypty\Menu.cs" />
-     <Compile Include="Assets\skrypty\PlatformInputController.cs" />
-     <Compile Include="Assets\skrypty\Podloga.cs" />
-     <Compile Include="Assets\skrypty\Potwor.cs" />
-     <Compile Include="Assets\skrypty\Powrot.cs" />
-     <Compile Include="Assets\skrypty\Przycisk.cs" />
-     <Compile Include="Assets\skrypty\PrzyciskDalej.cs" />
-     <Compile Include="Assets\skrypty\Reset.cs" />
-     <Compile Include="Assets\skrypty\SkaczacyPotwor.cs" />
-     <Compile Include="Assets\skrypty\Spear.cs" />
-     <Compile Include="Assets\skrypty\Wczytywanie.cs" />
-     <Compile Include="Assets\skrypty\Wybor.cs" />
-     <None Include="Assets\sciagniete\Standard Assets\Projectors\Guidelines.txt" />
-     <None Include="Assets\sciagniete\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
-     <None Include="Assets\sciagniete\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
-     <None Include="Assets\sciagniete\SpartanKing\animations.txt" />
-     <None Include="Assets\sciagniete\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
+     <Compile Include="Assets\Imported\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
+     <Compile Include="Assets\Imported\Standard Assets\Scripts\General Scripts\ActivateTrigger.cs" />
+     <Compile Include="Assets\Scripts\BackButtonController.cs" />
+     <Compile Include="Assets\Scripts\BonusController.cs" />
+     <Compile Include="Assets\Scripts\CharacterMotor.cs" />
+     <Compile Include="Assets\Scripts\ChooseViewController.cs" />
+     <Compile Include="Assets\Scripts\ContinueButtonController.cs" />
+     <Compile Include="Assets\Scripts\FPSInputController.cs" />
+     <Compile Include="Assets\Scripts\FirstMainMonster.cs" />
+     <Compile Include="Assets\Scripts\JumpingMonster.cs" />
+     <Compile Include="Assets\Scripts\LighteningButton.cs" />
+     <Compile Include="Assets\Scripts\LighteningController.cs" />
+     <Compile Include="Assets\Scripts\LoadingViewController.cs" />
+     <Compile Include="Assets\Scripts\MenuButtonsController.cs" />
+     <Compile Include="Assets\Scripts\MenuViewController.cs" />
+     <Compile Include="Assets\Scripts\Monster.cs" />
+     <Compile Include="Assets\Scripts\MonsterFactory.cs" />
+     <Compile Include="Assets\Scripts\PlatformInputController.cs" />
+     <Compile Include="Assets\Scripts\Player.cs" />
+     <Compile Include="Assets\Scripts\ResetController.cs" />
+     <Compile Include="Assets\Scripts\SpearController.cs" />
+     <Compile Include="Assets\Scripts\Surface.cs" />
+     <Compile Include="Assets\Scripts\WildGrowth.cs" />
+     <None Include="Assets\Imported\Standard Assets\Projectors\Guidelines.txt" />
+     <None Include="Assets\Imported\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\Imported\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
+     <None Include="Assets\Imported\SpartanKing\animations.txt" />
+     <None Include="Assets\Imported\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
