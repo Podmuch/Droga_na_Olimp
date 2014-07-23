@@ -1,56 +1,55 @@
-//Skaczący Potwór - klasa pochodna zwykłego potwora
-//zmodyfikowany ruch i inna obsługa animacji
+//Jumping Monster - inherit from Monster
 using UnityEngine;
 using System.Collections;
 
-public class SkaczacyPotwor : Monster {
-	//potrzebny do animacji
-	private bool lot=false;
-	//obsluga animacji i ruchu
-	private float poczatekskoku=3.49f, poczateksmierci=9.0f, czasskoku=0.0f, maxczasskoku=0.8f, pol=0.5f, wysokosckontrolera;
+public class JumpingMonster : Monster {
+	//Animation
+	private bool isFlight=false;
+	//Animation and Movement Control
+	private float jumpStart=3.49f, dieStart=9.0f, jumpTime=0.0f, maxJumpTime=0.8f, constHalf=0.5f, ControllerHeight;
     private new void Start()
     {
-        obrotposmierciX = 90.0f;
-        obrotposmierciZ = 0.0f;
-        wysokosckontrolera = controller.height;
+        rotationAfterStrokeX = 90.0f;
+        rotationAfterStrokeZ = 0.0f;
+        ControllerHeight = controller.height;
     }
 	private new void Update () {
-		zawijanie ();
-		animacja ();
+		Wrapping ();
+		Animation ();
 		Move ();
 	}
-    //animacja skoku
-	private void animacja(){
-		//animacja
-		if(!lot){
+    //Jump Animation
+	private void Animation(){
+		//Animation
+		if(!isFlight){
 			if(controller.isGrounded&&!isDead&&
-			   (!isHurt||(czasdowstania<hurtTime*momentostrzezenia))) {
+			   (!isHurt||(timeToRescue<hurtTime*warrning))) {
 				foreach(AnimationState state in animation){
-					state.time=poczatekskoku;
+					state.time=jumpStart;
 				}
 				animation.Play ();
-				czasskoku=maxczasskoku;
-				lot=true;
+				jumpTime=maxJumpTime;
+				isFlight=true;
 			}
 		}
 		else {
-			czasskoku-=Time.deltaTime;
-			if(czasskoku<0.0f) lot=false;
+			jumpTime-=Time.deltaTime;
+			if(jumpTime<0.0f) isFlight=false;
 		}
 	}
-    //nowy sposób ruchu - skokowy
+    //Movement - jumping
 	private new void Move(){
 		if(!isHurt){
-            //zmiana wysokosci kontrolera przy powrocie do normalnego chodzenia
-            controller.height = wysokosckontrolera;
-			//ruch po powtórnym podbiciu
-			if(czasdowstania>0.0f){
+            //Controller Height change - other rotation (Monster should touching surface, so controller must be reduced)
+            controller.height = ControllerHeight;
+            //Movement after double stroke
+			if(timeToRescue>0.0f){
 				controller.Move(new Vector3(speed, jumpForce, 0));
-				czasdowstania-=Time.deltaTime;
+				timeToRescue-=Time.deltaTime;
 			}
-			//normalny ruch
+			//normal Movement
 			else {
-				if(czasskoku>maxczasskoku*pol){
+				if(jumpTime>maxJumpTime*constHalf){
 					controller.Move(new Vector3(speed,Mathf.Abs(speed), 0));
 				}
 				else {
@@ -60,41 +59,41 @@ public class SkaczacyPotwor : Monster {
 			}
 		}
 		else {
-            //zmniejszenie kontrolera, żeby potwór nie wisiał w powietrzu tylko upadł na ziemie
+            //Controller Height change - other rotation (Monster should touching surface, so controller must be reduced)
             controller.height = 0;
-			czasdowstania-=Time.deltaTime;
-			//początkowy lot po podbiciu
-			if(czasdowstania>hurtTime-flyingTime){
+			timeToRescue-=Time.deltaTime;
+            //Initial flight after stroke
+			if(timeToRescue>hurtTime-flightTime){
 				controller.Move(new Vector3(speed, jumpForce, 0));
 			}
-			//normalny ruch po podbiciu -dzialanie grawitacji oraz umożliwienie zebrania potwora
+			//Movement when monster is hurt - allows collect monster
 			else {
 				controller.Move(new Vector3(minMove, -gravityForce, 0));
-				if(czasdowstania<hurtTime*momentostrzezenia){
+				if(timeToRescue<hurtTime*warrning){
 					animation.Play();
 				}
 			}
-			if(czasdowstania<0.0f){
+			if(timeToRescue<0.0f){
 				isHurt=false;
-				czasdowstania=0.0f;
-				//obrot w osi X (podniesienie się potwora)
-                transform.Rotate(-obrotposmierciZ, 0, -obrotposmierciX, 0);
+				timeToRescue=0.0f;
+                //RotationX -  monster rotates to normal rotation
+                transform.Rotate(-rotationAfterStrokeZ, 0, -rotationAfterStrokeX, 0);
 			}
 		}
-		if(czasodbicia>0.0f) czasodbicia-=Time.deltaTime;
+		if(RescueDelay>0.0f) RescueDelay-=Time.deltaTime;
 	}
-	//smierc
-	protected new IEnumerator piorun(){
+	//Death
+	protected new IEnumerator Lightening(){
 		isDead = true;
-		yield return new WaitForSeconds(opoznienie);
+		yield return new WaitForSeconds(Delay);
 		speed = 0;
 		foreach(AnimationState state in animation){
-			state.time=poczateksmierci;
+			state.time=dieStart;
 		}
 		animation.Play ();
-		yield return new WaitForSeconds(opoznienieprzysmierci);
-		FindObjectOfType<Player> ().ilpunktow += points;
-		FindObjectOfType<Fabryka> ().iloscpozostalychpotworow--;
+		yield return new WaitForSeconds(DieDelay);
+		FindObjectOfType<Player> ().points += points;
+		FindObjectOfType<MonsterFactory> ().remainingMonsters--;
 		Destroy(gameObject);
 	}
 }

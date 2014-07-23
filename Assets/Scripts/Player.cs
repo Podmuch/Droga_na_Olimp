@@ -1,195 +1,196 @@
-﻿//Gracz
+﻿//Player
 using UnityEngine;
 
 public class Player : MonoBehaviour {
-	//ilosc dynamitu i punktów
-	public int iloscdynamitu = 3,ilpunktow=0, ilzyc=3;
-	//ruch gracza
-	public CharacterController kontroler;
-	//dzwieki
-	public AudioSource skokaudio, smiercaudio;
-	//wyswietlanie punktow i zycia
+    //lighteningCharges, points, lives
+	public int lighteningCharges = 3,points=0, lives=3;
+	//Player Controller
+	public CharacterController controller;
+	//Sounds
+	public AudioSource jump, death;
+	//points and lives display
 	private TextMesh text=null;
-	//parametry ruchu gracza
-	private CharacterMotor ChMotor;
-	//ilosc zyc,maximum dynamitu i punkty za zebranie bonusu punktowego
-	private int maxdynamit=3, punktyzabonus=1000;
-	//obsluga czasu i bonusow
-	private float czaslotu=0.0f, maxczaslotu=1.0f,
-				  czasniewidzialnosci=0.0f, maxczasniewidzialnosci=3.0f,
-				  czasprzyspieszenia=0.0f, czasspowolnienia=0.0f, maxczasbonusu=10.0f, mocbonusu=2;
-	private bool lewo=false, prawo=false, ruch=false, nietykalny=false, animacjasmierci=false;
-	//pozycja startowa i ruch do wykrywania kolizji gdy gracz nic nie robi
-	private Vector3 pozycjastartowa=new Vector3(980,97,270),
-					niewidocznyruch=new Vector3(0.0001f, 0, 0),
-					kieruneklotuposmierci=new Vector3(0.1f, 0.1f, 0.0f); //poczatkowe wznoszenie się po śmierci
-	//obrot postaci przy zmianie kierunku ruchu
-	private Quaternion obrotwprawo=new Quaternion(0,0.7071068f,0,0.7071068f),
-					   obrotwlewo=new Quaternion(0,0.7071068f,0,-0.7071068f);
-	//krance mapy potrzebne do zwijania
-	private float lewykraniec=966.5f ,prawykraniec=993.5f;
-	//zablokowanie ruchu przy wygranej
-	public bool wygrana=false;
-	//pozwala pozostac obiektowi na drugą runde
+	//Character Motor
+	private CharacterMotor chMotor;
+	//Maxiumum number Lightening Charges and points for money bonus collect
+	private int maxLighteningCharges=3, bonusPoints=1000;
+	//Time and Bonuses control
+	private float flightTime=0.0f, maxFlightTime=1.0f,
+				  invisibilityTime=0.0f, maxInvisibilityTime=3.0f,
+				  accelerationTime=0.0f, slowdownTime=0.0f, maxBonusEffectTime=10.0f, BonusForce=2;
+	private bool isTurnedLeft=false, isTurnedRight=false, isMoving=false, isInviolable=false, isDead=false;
+	//Respawn, and base move directions
+	private Vector3 Respawn=new Vector3(980,97,270),
+					minMove=new Vector3(0.0001f, 0, 0),
+                    flightAfterDie = new Vector3(0.1f, 0.1f, 0.0f); //Initial flight after die
+	//Left and Right Rotation
+	private Quaternion rightRotation=new Quaternion(0,0.7071068f,0,0.7071068f),
+					   leftRotation=new Quaternion(0,0.7071068f,0,-0.7071068f);
+    //map border ( need to wrapping)
+    private float leftBorder = 966.5f, rightBorder = 993.5f;
+	//disable control after Win
+	public bool isWin=false;
+    //This objects never destroyed
 	void Awake () {
 		DontDestroyOnLoad (this);
-		ChMotor=GetComponent<CharacterMotor> ();
+		chMotor=GetComponent<CharacterMotor> ();
 	}
-	//ustawienie tekstu z iloscią żyć i punktów
-	void ustawienietekstu(){
+	//Text setting
+	void setText(){
 		foreach( GameObject go in FindObjectsOfType<GameObject> ()){
-			if(go.tag=="tekst"){
+			if(go.tag=="Text"){
 				text= go.GetComponent<TextMesh>();
-				transform.position=pozycjastartowa;
-				wygrana=false;
+				transform.position=Respawn;
+				isWin=false;
 			}
 		}
 	}
 	// Update is called once per frame
 	void Update () {
-		if(FindObjectOfType<Przycisk>()!=null){
-			if(text==null) ustawienietekstu();
-			//zablokowanie ruchu przy wygranej
-			if(wygrana) transform.position=pozycjastartowa;
-			text.text="POINTS: "+ilpunktow.ToString()+"     LIVES: "+ilzyc.ToString();
-			//niewidoczny ruch, aby móc wykryć kolizje gdy gracz nic nie robi
-			kontroler.Move(niewidocznyruch);
-			animacje ();
-			zawijanie ();
-			spadanie ();
-			nietykalnosc ();
-			wygaszaniebonusow ();
+		if(FindObjectOfType<TouchButtonsController>()!=null){
+			if(text==null) setText();
+            //disable control after Win
+			if(isWin) transform.position=Respawn;
+			text.text="POINTS: "+points.ToString()+"     LIVES: "+lives.ToString();
+			//minMove - allows collision detection
+			controller.Move(minMove);
+			Animations ();
+			Wrapping ();
+			FallingDown ();
+			Inviolability ();
+			BonusesExpiration ();
 		}
 	}
-	//zmiana animacji podczas skrecania
-	void animacje(){
-		if((Input.GetKeyDown("up")||Przycisk.skok)&&kontroler.isGrounded) skokaudio.Play();
-		if(prawo||Przycisk.prawo) transform.rotation= obrotwprawo;
-		else prawo=Input.GetKeyDown("right");
-		if(lewo||Przycisk.lewo) transform.rotation=obrotwlewo;
-		else lewo=Input.GetKeyDown("left");
-		if(!ruch){
-			if(!animacjasmierci)animation.Play("walk");
-			ruch=true;
+	//Animations
+	void Animations(){
+		if((Input.GetKeyDown("up")||TouchButtonsController.jump)&&controller.isGrounded) jump.Play();
+		if(isTurnedRight||TouchButtonsController.right) transform.rotation= rightRotation;
+		else isTurnedRight=Input.GetKeyDown("right");
+		if(isTurnedLeft||TouchButtonsController.left) transform.rotation=leftRotation;
+		else isTurnedLeft=Input.GetKeyDown("left");
+		if(!isMoving){
+			if(!isDead)animation.Play("walk");
+			isMoving=true;
 		}
-		if(Input.GetKeyUp("right")) prawo=false;
-		if(Input.GetKeyUp("left")) lewo=false;
-		if(!lewo&&!prawo&&ruch&&!Przycisk.lewo&&!Przycisk.prawo){
-			ruch=false;
-			if(!animacjasmierci)animation.Play("idle");
+		if(Input.GetKeyUp("right")) isTurnedRight=false;
+		if(Input.GetKeyUp("left")) isTurnedLeft=false;
+		if(!isTurnedLeft&&!isTurnedRight&&isMoving&&!TouchButtonsController.left&&!TouchButtonsController.right){
+			isMoving=false;
+			if(!isDead)animation.Play("idle");
 		}
 	}
-	//zawijanie na krancach mapy
-	void zawijanie(){
-		if (transform.position.x < lewykraniec) transform.position=new Vector3(prawykraniec, transform.position.y,transform.position.z);
-		if (transform.position.x > prawykraniec) transform.position=new Vector3(lewykraniec, transform.position.y,transform.position.z);
+	//Wrapping
+	void Wrapping(){
+		if (transform.position.x < leftBorder) transform.position=new Vector3(rightBorder, transform.position.y,transform.position.z);
+		if (transform.position.x > rightBorder) transform.position=new Vector3(leftBorder, transform.position.y,transform.position.z);
 	}
-	//smierc
-	public void smierc(){
-		if(!nietykalny){
-			ilzyc--;
-			//wyswietlenie napisów końcowych
-			if(ilzyc<0) FindObjectOfType<Fabryka>().SendMessage("koniec", false);
-			czaslotu=maxczaslotu;
-			//przesuniecie po za plansze w osi Z, pozwala na animacje spadania
+	//Death
+	public void Death(){
+		if(!isInviolable){
+			lives--;
+			//End Game text display
+			if(lives<0) FindObjectOfType<MonsterFactory>().SendMessage("EndGame", false);
+			flightTime=maxFlightTime;
+			//Translate behind platforms - allows falling down animation
 			transform.Translate(3.0f,0,0);
-			animacjasmierci=true;
+			isDead=true;
 		}
 	}
-	//spadanie po smierci
-	void spadanie(){
-		czaslotu-=Time.deltaTime;
-		if(czaslotu>0.0f) {
-			kontroler.Move(kieruneklotuposmierci);
+	//Falling down animation
+	void FallingDown(){
+		flightTime-=Time.deltaTime;
+		if(flightTime>0.0f) {
+			controller.Move(flightAfterDie);
 			animation.Play("diehard");
 		}
-		if(transform.position.y<85&&ilzyc>-1){
-			transform.position = pozycjastartowa;
+		if(transform.position.y<85&&lives>-1){
+			transform.position = Respawn;
 			animation.Play("idle");
-			nietykalny=true;
-			animacjasmierci=false;
-			czasniewidzialnosci=maxczasniewidzialnosci;
-			if(ruch) animation.Play("walk");
+			isInviolable=true;
+			isDead=false;
+			invisibilityTime=maxInvisibilityTime;
+			if(isMoving) animation.Play("walk");
 		}
 	}
-	//nietykalnosc gracza gdy sie zrespawnuje, zeby mial szanse uciec
-	void nietykalnosc(){
-		if(nietykalny) {
-			czasniewidzialnosci-=Time.deltaTime;
-			if(czasniewidzialnosci<0.0f) {
-				nietykalny=false;
-				czasniewidzialnosci=0.0f;
+    //Inviolability when player spawns again
+	void Inviolability(){
+		if(isInviolable) {
+			invisibilityTime-=Time.deltaTime;
+			if(invisibilityTime<0.0f) {
+				isInviolable=false;
+				invisibilityTime=0.0f;
 			}
-			//r=b=g=0.588, a=1.0 naturalny kolor
-			//zmiana od czarnego do naturalnego koloru w zależności od pozostałego czasu niewidzialności
-			float nowykolor=0.1f+(0.488f-(czasniewidzialnosci*0.488f)/maxczasniewidzialnosci);
+			//r=b=g=0.588, a=1.0 natural color
+            //change from black to a normal color in depending on the time
+			float newColor=0.1f+(0.488f-(invisibilityTime*0.488f)/maxInvisibilityTime);
 			foreach( Renderer r in gameObject.GetComponentsInChildren<Renderer>()){
-				//zmiana koloru tekstur po zrespieniu się gracza(z czarnego do naturalnego)
-				r.material.color = new Color(nowykolor,nowykolor,nowykolor,1.0f);
+                //change textures colors
+				r.material.color = new Color(newColor,newColor,newColor,1.0f);
 			}
 
 		}
 	}
-	//wygaszanie przyspieszenia i spowolnienia
-	void wygaszaniebonusow (){
-		if(czasprzyspieszenia>0.0f) {
-			czasprzyspieszenia-=Time.deltaTime;
-			if(czasprzyspieszenia<0.0f) {
-				ChMotor.movement.maxForwardSpeed /= mocbonusu;
-				ChMotor.movement.maxGroundAcceleration /= mocbonusu;
-				ChMotor.movement.maxAirAcceleration /= mocbonusu;
-				ChMotor.jumping.baseHeight /= mocbonusu;
+    //Acceleration and SlowDown bonuses expiration
+	void BonusesExpiration (){
+		if(accelerationTime>0.0f) {
+			accelerationTime-=Time.deltaTime;
+			if(accelerationTime<0.0f) {
+				chMotor.movement.maxForwardSpeed /= BonusForce;
+				chMotor.movement.maxGroundAcceleration /= BonusForce;
+				chMotor.movement.maxAirAcceleration /= BonusForce;
+				chMotor.jumping.baseHeight /= BonusForce;
 			}
 		}
-		if(czasspowolnienia>0.0f){
-			czasspowolnienia-=Time.deltaTime;
-			if(czasspowolnienia<0.0f) {
-				ChMotor.movement.maxForwardSpeed *= mocbonusu;
-				ChMotor.movement.maxGroundAcceleration *= mocbonusu;
-				ChMotor.movement.maxAirAcceleration *= mocbonusu;
-				ChMotor.jumping.baseHeight *= mocbonusu;
+		if(slowdownTime>0.0f){
+			slowdownTime-=Time.deltaTime;
+			if(slowdownTime<0.0f) {
+				chMotor.movement.maxForwardSpeed *= BonusForce;
+				chMotor.movement.maxGroundAcceleration *= BonusForce;
+				chMotor.movement.maxAirAcceleration *= BonusForce;
+				chMotor.jumping.baseHeight *= BonusForce;
 			}
 		}
 	}
-	//zbieranie bonusow
-	public void bonus(string tagbonusu){
-		switch (tagbonusu) {
-			case "zycie":
-				ilzyc++;
+	//Bonus Collecting
+	public void OnBonusCollected(string bonusTag){
+		switch (bonusTag) {
+			case "LifeBonus":
+				lives++;
 				break;
-			case "kasa": 
-				ilpunktow+=punktyzabonus;
+			case "MoneyBonus": 
+				points+=bonusPoints;
 				break;
-			case "blyskawica":
-				if(iloscdynamitu<maxdynamit) iloscdynamitu++;
-				FindObjectOfType<LighteningButton>().SendMessage("zmianailoscidynamitu");
+			case "LighteningBonus":
+				if(lighteningCharges<maxLighteningCharges) lighteningCharges++;
+                FindObjectOfType<LighteningButton>().SendMessage("OnLighteningChargesChanged");
 				break;
-			case "przyspieszenie":
-				if(czasprzyspieszenia<=0.0f){
-					ChMotor.movement.maxForwardSpeed *= mocbonusu;
-					ChMotor.movement.maxGroundAcceleration *= mocbonusu;
-					ChMotor.movement.maxAirAcceleration *= mocbonusu;
-					ChMotor.jumping.baseHeight *= mocbonusu;
-					czasprzyspieszenia=maxczasbonusu;
+			case "AccelerationBonus":
+				if(accelerationTime<=0.0f){
+					chMotor.movement.maxForwardSpeed *= BonusForce;
+					chMotor.movement.maxGroundAcceleration *= BonusForce;
+					chMotor.movement.maxAirAcceleration *= BonusForce;
+					chMotor.jumping.baseHeight *= BonusForce;
+					accelerationTime=maxBonusEffectTime;
 				}
 				break;
-			case "spowolnienie":
-				if(czasspowolnienia<=0.0f){
-					ChMotor.movement.maxForwardSpeed /= mocbonusu;
-					ChMotor.movement.maxGroundAcceleration /= mocbonusu;
-					ChMotor.movement.maxAirAcceleration /= mocbonusu;
-					ChMotor.jumping.baseHeight /= mocbonusu;
-					czasspowolnienia=maxczasbonusu;
+            case "SlowdownBonus":
+				if(slowdownTime<=0.0f){
+					chMotor.movement.maxForwardSpeed /= BonusForce;
+					chMotor.movement.maxGroundAcceleration /= BonusForce;
+					chMotor.movement.maxAirAcceleration /= BonusForce;
+					chMotor.jumping.baseHeight /= BonusForce;
+					slowdownTime=maxBonusEffectTime;
 				}
 				break;
 		}
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if((other.tag=="potwor"||other.tag=="boss")&&!nietykalny) smiercaudio.Play();
-		if(other.tag=="spear"&&!nietykalny){
-			smiercaudio.Play();
-			smierc();
-		}
+        if ((other.tag == "Monster" || other.tag == "Boss" || other.tag == "Spear") && !isInviolable)
+        {
+            death.Play();
+            //When monsters, player die before (monster send massage)
+            if(other.tag=="Spear")Death();
+        }
 	}
 }

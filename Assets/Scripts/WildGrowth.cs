@@ -1,26 +1,26 @@
-﻿//Typ podłogi, który znika po uderzeniu
+﻿//One of the surface type - disappears after hitting
 using UnityEngine;
 
-public class Krzaki : MonoBehaviour {
-	public Transform fundament;
-	private bool podbicie=false;
-	private float czas=0.0f, maxczas=0.3f, silapodbicia=0.3f;
+public class WildGrowth : MonoBehaviour {
+	public Transform surfaceBase;
+	private bool isStroke=false;
+	private float TimeCounter=0.0f, maxStrokeTime=0.3f, strokeForce=0.3f;
 	//Update
 	void Update () {
-		if (podbicie == true) {
-			czas-=Time.deltaTime;
-			if(czas<0.0f){
-				Destroy(fundament.gameObject);
+		if (isStroke == true) {
+			TimeCounter-=Time.deltaTime;
+			if(TimeCounter<0.0f){
+				Destroy(surfaceBase.gameObject);
 				Destroy(gameObject);
 			}
 		}
 	}
-	//podbicie przez gracza
+    //Collision with player - stroke
 	void OnTriggerEnter(Collider other) {
 		if(other.tag=="Player") {
-			transform.Translate (0, -silapodbicia, 0);
-			podbicie=true;
-			czas=maxczas;
+			transform.Translate (0, -strokeForce, 0);
+			isStroke=true;
+			TimeCounter=maxStrokeTime;
 		}
 	}
 }

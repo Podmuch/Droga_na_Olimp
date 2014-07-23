@@ -1,4 +1,4 @@
-﻿//Button provide back to menu before game end
+﻿//Button allows back to menu before game end
 using UnityEngine;
 
 public class BackButtonController : MonoBehaviour {

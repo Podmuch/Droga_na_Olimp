@@ -1,5 +1,3 @@
-//Klasa z internetu (wersja FPSInputController'a w jêzyku C#)
-//z pewnymi modyfikacjami umo¿liwiaj¹cymi ruch graczem za pomoc¹ przycisków na planszy (dla urz¹dzeñ dotykowych)
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,14 +19,14 @@ public class FPSInputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //modyfikacja I - inicjalizacja zmiennych na podstawie statycznych w³aœciwoœci przycisków
-        //je¿eli przycisków nie ma (np w menu) to wszystkie ustawiamy na false
-		bool skok=false, lewo=false, prawo = false;
-		if(FindObjectOfType<Przycisk>()!=null) 
+        //Modyfication I - Initialization variables based on static variables
+        //False when buttons don't exist
+		bool jump=false, left=false, right = false;
+		if(FindObjectOfType<TouchButtonsController>()!=null) 
 		{
-			skok = Przycisk.skok;
-			lewo = Przycisk.lewo;
-			prawo = Przycisk.prawo;
+			jump = TouchButtonsController.jump;
+			left = TouchButtonsController.left;
+			right = TouchButtonsController.right;
 		}
         // Get the input vector from kayboard or analog stick
         Vector3 directionVector = new Vector3(0, 0, Input.GetAxis("Vertical"));
@@ -50,9 +48,9 @@ public class FPSInputController : MonoBehaviour
             // Multiply the normalized direction vector by the modified length
             directionVector = directionVector * directionLength;
         }
-        //modyfikacja II - je¿eli wektor ruchu jest zerowy (klawiatura nie u¿yta, sprawdzamy czy któryœ z przycisków jest aktywny) 
+        //Modyfication II - if vdirectionVector is vector zero (keyboard didn't use, check the buttons) 
 		else {
-			directionVector=new Vector3(0,0,(lewo||prawo)?0.5f:0.0f);
+			directionVector=new Vector3(0,0,(left||right)?0.5f:0.0f);
 			if (directionVector != Vector3.zero)
 			{
 				// Get the length of the directon vector and then normalize it
@@ -73,7 +71,7 @@ public class FPSInputController : MonoBehaviour
 		}
 		// Apply the direction to the CharacterMotor
 		motor.inputMoveDirection = transform.rotation * directionVector;
-        //modyfikacja III - reakcja na przycisk do skoku
-        motor.inputJump = Input.GetButton("Jump")||skok;
+        //Modyfication III - check jump button
+        motor.inputJump = Input.GetButton("Jump")||jump;
     }
 }

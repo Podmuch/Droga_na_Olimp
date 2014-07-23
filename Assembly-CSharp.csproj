@@ -59,7 +59,6 @@
      <Compile Include="Assets\Scripts\LighteningButton.cs" />
      <Compile Include="Assets\Scripts\LighteningController.cs" />
      <Compile Include="Assets\Scripts\LoadingViewController.cs" />
-     <Compile Include="Assets\Scripts\MenuButtonsController.cs" />
      <Compile Include="Assets\Scripts\MenuViewController.cs" />
      <Compile Include="Assets\Scripts\Monster.cs" />
      <Compile Include="Assets\Scripts\MonsterFactory.cs" />
@@ -68,6 +67,7 @@
      <Compile Include="Assets\Scripts\ResetController.cs" />
      <Compile Include="Assets\Scripts\SpearController.cs" />
      <Compile Include="Assets\Scripts\Surface.cs" />
+     <Compile Include="Assets\Scripts\TouchButtonsController.cs" />
      <Compile Include="Assets\Scripts\WildGrowth.cs" />
      <None Include="Assets\Imported\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Imported\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />

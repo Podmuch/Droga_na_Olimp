@@ -1,136 +1,136 @@
-﻿//Pierwszy Boss - obsługa pojawiających się potworów, ruchu bossa oraz śmierci
+﻿//First Main Monster (Boss) - moving, death, control small monsters spawns
 using UnityEngine;
 using System.Collections;
 
 public class BossPotwor : Monster {
-	//dzwieki
-	public AudioSource skokaudio, smiercaudio, nowepotworyaudio, upadekaudio;
-	//resp
-	public int zycia;
-	//potwory
-	public Transform[] potwor;
-	public int iloscgatunkow, iloscrespow;
-	public Vector3[] respy;
-	//obsluga ruchu
-	private float czaschodzenia=0.0f, maxczaschodzenia=20.0f, zasiegwidoku=7.0f;
-	//dane na temat gracza
-	private Player gracz;
-	private Vector3 pozycjagracza;
-	//obsluga obrotów i dźwięku upadania
-	private bool lewo=false, lot=true;
-	private Quaternion obrotwprawo=new Quaternion(0,0.7071068f,0,0.7071068f),
-	obrotwlewo=new Quaternion(0,0.7071068f,0,-0.7071068f);
+	//Sounds
+	public AudioSource jump, death, newMonster, fallingDown;
+	//Lives
+	public int lives;
+	//Monsters
+	public Transform[] monsters;
+	public int numberOfMonsterTypes, numberOfSpawns;
+	public Vector3[] spawns;
+	//Moving control
+	private float movingTime=0.0f, maxMovingTime=20.0f, seeingRange=7.0f;
+	//Data about Player
+	private Player player;
+	private Vector3 playerPosition;
+	//Falling down and sounds control
+	private bool isLeft=false, isFlight=true;
+	private Quaternion rotation_Right=new Quaternion(0,0.7071068f,0,0.7071068f),
+	rotation_Left=new Quaternion(0,0.7071068f,0,-0.7071068f);
 	new void Start(){
-		gracz = FindObjectOfType<Player> ();
+		player = FindObjectOfType<Player> ();
 		animation.Play();
-		lewykraniec = 966.5f;
-		prawykraniec=993.5f;
+		leftBorder = 966.5f;
+		rightBorder=993.5f;
 	}
 
 	new void Update(){
-		zawijanie ();
+		Wrapping ();
 		Move ();
 	}
-	//tworzenie nowych potworów, gdy zostanie podbity
-	void tworzeniepotworow(){
-		for(int i=0;i<iloscrespow;i++){
+	//Creating new monsters after stroke
+	void CreateMonsters(){
+		for(int i=0;i<numberOfSpawns;i++){
 			Transform nowy=null;
-			nowy=(Transform)Instantiate(potwor[i%iloscgatunkow],respy[i] , Quaternion.identity);
-			Instantiate(explosionAnimation, respy[i], Quaternion.identity);
-			//obrot wokół osi Y, aby ustawić go zgodnie z ustawieniem platform
+			nowy=(Transform)Instantiate(monsters[i%numberOfMonsterTypes],spawns[i] , Quaternion.identity);
+			Instantiate(explosionAnimation, spawns[i], Quaternion.identity);
+			//RotationY - parallel to platforms orientation
 			nowy.Rotate(0,90,0,0);
 		}
-		nowepotworyaudio.Play ();
+		newMonster.Play ();
 	}
 	//ruch
 	new void Move(){
-		pozycjagracza = gracz.transform.position;
-		czaschodzenia += Time.deltaTime;
-		if(czaschodzenia<maxczaschodzenia*0.5f){
-			if(pozycjagracza.x-zasiegwidoku>transform.position.x||
-			   pozycjagracza.x+zasiegwidoku<transform.position.x) 
+		playerPosition = player.transform.position;
+		movingTime += Time.deltaTime;
+		if(movingTime<maxMovingTime*0.5f){
+			if(playerPosition.x-seeingRange>transform.position.x||
+			   playerPosition.x+seeingRange<transform.position.x) 
 			{
-				if(pozycjagracza.x<transform.position.x) {
-					if(!lewo) {
-						transform.rotation=obrotwlewo;
-						lewo=true;
+				if(playerPosition.x<transform.position.x) {
+					if(!isLeft) {
+						transform.rotation=rotation_Left;
+						isLeft=true;
 						speed=-speed;
 					}
 				}
 				else {
-					if(lewo) {
-						transform.rotation=obrotwprawo;
-						lewo=false;
+					if(isLeft) {
+						transform.rotation=rotation_Right;
+						isLeft=false;
 						speed=-speed;
 					}
 				}
 			}
 		}
 		else {
-			if(czaschodzenia>maxczaschodzenia) czaschodzenia=0;
+			if(movingTime>maxMovingTime) movingTime=0;
 		}
-		if (czaschodzenia > maxczaschodzenia*0.75f && czaschodzenia < maxczaschodzenia*0.75f+flyingTime) {
-			if(controller.isGrounded) skokaudio.Play();
+		if (movingTime > maxMovingTime*0.75f && movingTime < maxMovingTime*0.75f+flightTime) {
+			if(controller.isGrounded) jump.Play();
 			if(transform.position.z==270.0f) transform.Translate(2.0f,0,0);
 			controller.Move(new Vector3(speed, jumpForce, 0));
-			lot=true;
+			isFlight=true;
 		}
 		else {
 			if(transform.position.z!=270.0f) transform.position=new Vector3(transform.position.x,transform.position.y,270);
-			if(lot&&controller.isGrounded){
-				lot=false;
-				upadekaudio.Play();
+			if(isFlight&&controller.isGrounded){
+				isFlight=false;
+				fallingDown.Play();
 			}
 			controller.Move(new Vector3(speed, -gravityForce, 0));
 		}
 	}
-	//zawijanie
-	new void zawijanie(){
-		if(czaschodzenia<maxczaschodzenia*0.5f)czaschodzenia = maxczaschodzenia * 0.5f;
-		if (transform.position.x < lewykraniec) transform.position=new Vector3(prawykraniec, transform.position.y,transform.position.z);
-		if (transform.position.x > prawykraniec) transform.position=new Vector3(lewykraniec, transform.position.y,transform.position.z);
+	//Wrapping
+	new void Wrapping(){
+		if(movingTime<maxMovingTime*0.5f)movingTime = maxMovingTime * 0.5f;
+		if (transform.position.x < leftBorder) transform.position=new Vector3(rightBorder, transform.position.y,transform.position.z);
+		if (transform.position.x > rightBorder) transform.position=new Vector3(leftBorder, transform.position.y,transform.position.z);
 	}
-	//kolizje
+	//Collisions
 	new void OnTriggerEnter(Collider other) {
 		switch (other.tag){
-		case "podloga":
-			if(other.bounds.center.y<transform.position.y&&!lot) {
-				zycia--;
-				if(zycia==0) 
-					SendMessage("smierc");
+		case "Surface":
+			if(other.bounds.center.y<transform.position.y&&!isFlight) {
+				lives--;
+				if(lives==0) 
+					SendMessage("Death");
 				else {
-					tworzeniepotworow();
-					czaschodzenia=maxczaschodzenia*0.75f;
+					CreateMonsters();
+					movingTime=maxMovingTime*0.75f;
 				}
 			}
 			break;
 		case "Player":
-			if(!isDead)other.SendMessage("smierc");
+			if(!isDead)other.SendMessage("Death");
 			break;
 		}
 	}
-	//smierc
-	new IEnumerator piorun(){
+	//Death
+	new IEnumerator Lightening(){
 		float tmp = speed;
 		speed=0;
 		animation.Play("resist");
-		yield return new WaitForSeconds(opoznienieprzysmierci);
+		yield return new WaitForSeconds(DieDelay);
 		speed = tmp;
 		animation.Play ("walk");
 	}
 	//smierc
-	new IEnumerator smierc(){
-		smiercaudio.Play ();
+	new IEnumerator Death(){
+		death.Play ();
 		isDead = true;
 		foreach(Monster p in FindObjectsOfType<Monster>()){
-			if(p.tag!="boss")p.SendMessage("smierc");
+			if(p.tag!="Boss")p.SendMessage("Death");
 		}
 		speed = 0;
-		czaschodzenia = 0;
+		movingTime = 0;
 		animation.Play("die");
-		yield return new WaitForSeconds(2*opoznienieprzysmierci);
-		FindObjectOfType<Player> ().ilpunktow += points;
-		FindObjectOfType<Fabryka> ().SendMessage ("koniec", true);
+		yield return new WaitForSeconds(2*DieDelay);
+		FindObjectOfType<Player> ().points += points;
+		FindObjectOfType<MonsterFactory> ().SendMessage ("EndGame", true);
 		Destroy(gameObject);
 	}
 }

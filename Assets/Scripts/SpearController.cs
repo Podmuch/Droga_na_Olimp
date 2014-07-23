@@ -1,47 +1,47 @@
 ﻿//Spear Controller
 //Spear is throwing across map, Player should 
-//należy jej unikać, gdyż przy kolizji straci się życie (jako ostrzeżenie usłyszymy dźwięk rzutu)
+//Player should avoided it, becouse he die when collision occurs
+//Throwing sounds is a warring
 using UnityEngine;
 
-public class Spear : MonoBehaviour {
-	private bool lot=false, lewo=true;
-	//pojawianie się włóczni
-	public float czas=0.0f, interwal=1.0f;
-	//wybór stron
+public class SpearController : MonoBehaviour {
+	private bool flight=false, left=true;
+	public float timeCounter=0.0f, interval=1.0f;
+    //random selection of parts
 	private System.Random rand=new System.Random();
-	//obsługa lotu
-	private float pozycjaZ=269.95f, srodekY=104, lewykraniec=960, prawykraniec=1000, przesuniecie=10, predkosc=-0.5f;
+	//Flight Control
+	private float startPositionZ=269.95f, mapHeightCenter=104, leftBroder=960, rightBorter=1000, translation=10, speed=-0.5f;
 	private int polowawysokości = 8;
 	// Update is called once per frame
 	void Update () {
-		if(!lot) {
-			czas -= Time.deltaTime;
-			if(czas<0.0f){
-				czas=interwal;
-				lot=true;
+		if(!flight) {
+			timeCounter -= Time.deltaTime;
+			if(timeCounter<0.0f){
+				timeCounter=interval;
+				flight=true;
 				audio.Play();
-				//wybór strony pojawienia się włóczni
+                //random selection of parts
 				if(rand.Next(2)<1) {
-					transform.position=new Vector3(lewykraniec,(float)(srodekY+rand.Next(-polowawysokości,polowawysokości)),pozycjaZ);
-					if(lewo) {
-						lewo=false;
-						//ustawienie w odpowiednią stronę
+					transform.position=new Vector3(leftBroder,(float)(mapHeightCenter+rand.Next(-polowawysokości,polowawysokości)),startPositionZ);
+					if(left) {
+						left=false;
+						//RotationY
 						transform.Rotate(0,0,180,0);
 					}
 				}
 				else {
-					transform.position=new Vector3(prawykraniec,(float)(srodekY+rand.Next(-polowawysokości,polowawysokości)),pozycjaZ);
-					if(!lewo) {
-						lewo=true;
-						//ustawienie w odpowiednią stronę
+					transform.position=new Vector3(rightBorter,(float)(mapHeightCenter+rand.Next(-polowawysokości,polowawysokości)),startPositionZ);
+					if(!left) {
+						left=true;
+                        //RotationY
 						transform.Rotate(0,0,180,0);
 					}
 				}
 			}
 		}
 		else {
-			transform.Translate(predkosc,0,0);
-			if(transform.position.x>prawykraniec+przesuniecie||transform.position.x<lewykraniec-przesuniecie) lot=false;
+			transform.Translate(speed,0,0);
+			if(transform.position.x>rightBorter+translation||transform.position.x<leftBroder-translation) flight=false;
 		}
 	}
 }

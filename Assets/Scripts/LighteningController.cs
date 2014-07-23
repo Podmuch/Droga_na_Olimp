@@ -1,11 +1,11 @@
-﻿//obsługa błyskawic powstających przy potworach po uderzeniu w 'dynamit'
+﻿//Lightening Controller
 using UnityEngine;
 
-public class Blyskawica : MonoBehaviour {
-	private float czas=0.5f;	
+public class LighteningController : MonoBehaviour {
+	private float lifeTime=0.5f;	
 	// Update is called once per frame
 	void Update () {
-		czas -= Time.deltaTime;
-		if(czas<0) Destroy(gameObject);
+		lifeTime -= Time.deltaTime;
+		if(lifeTime<0) Destroy(gameObject);
 	}
 }

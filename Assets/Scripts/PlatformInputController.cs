@@ -1,4 +1,3 @@
-//Klasa z internetu (wersja PlatformInputController'a w jêzyku C#)
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

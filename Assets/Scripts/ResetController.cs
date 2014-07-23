@@ -1,13 +1,13 @@
-﻿//Funkcja uruchamiana przy powrocie gracza do menu - tymczasowa
+﻿//temporary
 using UnityEngine;
 
-public class Reset : MonoBehaviour {
+public class ResetController : MonoBehaviour {
 	void Start () {
-		Player gracz = FindObjectOfType<Player> ();
-		if(gracz!=null){
-			gracz.ilpunktow = 0;
-			gracz.iloscdynamitu = 3;
-			gracz.ilzyc = 3;
+		Player player = FindObjectOfType<Player> ();
+		if(player!=null){
+			player.points = 0;
+			player.lighteningCharges = 3;
+			player.lives = 3;
 		}
 	}
 }
