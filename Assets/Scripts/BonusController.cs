@@ -27,7 +27,7 @@ public class BonusController : MonoBehaviour {
 				visible=true;
 			}
 			else {
-				other.SendMessage("bonus",tag);
+                other.SendMessage("OnBonusCollected", tag);
 				Destroy(gameObject);
 			}
 		}

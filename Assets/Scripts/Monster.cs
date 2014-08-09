@@ -53,9 +53,12 @@ public class Monster : MonoBehaviour {
 			//Initial flight after stroke
 			if(timeToRescue>hurtTime-flightTime){
                 //zmienna skok powinna byc usunieta, ruch po okregu odpowiednim (wedlug zmiennej predkosc)
+               /* x' = x * cos(fi) – y * sin(fi)
+                y' = x * sin(fi) + y * cos(fi)
+					*/
                 controller.Move(new Vector3(speed * Mathf.Cos(Mathf.PI * (hurtTime - timeToRescue) / (3.0f * flightTime)), jumpForce, 0));
 			}
-			//normalny ruch po podbiciu - dzialanie grawitacji oraz umożliwienie zebrania potwora
+			//movement after stroke - gravity and allows collect monster
 			else {
 				if(controller.isGrounded)controller.Move(new Vector3(minMove, -gravityForce, 0));
                 else controller.Move(new Vector3(speed * Mathf.Sin(Mathf.PI * (hurtTime-timeToRescue - flightTime)/ (2.0f/3.0f*hurtTime) + Mathf.PI/3.0f), -gravityForce, 0));

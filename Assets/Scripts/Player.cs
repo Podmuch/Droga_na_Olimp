@@ -157,10 +157,10 @@ public class Player : MonoBehaviour {
 			case "LifeBonus":
 				lives++;
 				break;
-			case "MoneyBonus": 
+            case "MoneyBonus": 
 				points+=bonusPoints;
 				break;
-			case "LighteningBonus":
+            case "LighteningBonus":
 				if(lighteningCharges<maxLighteningCharges) lighteningCharges++;
                 FindObjectOfType<LighteningButton>().SendMessage("OnLighteningChargesChanged");
 				break;

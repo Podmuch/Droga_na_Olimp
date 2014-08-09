@@ -1,15 +1,14 @@
-﻿//First Main Monster (Boss) - moving, death, control small monsters spawns
+//First Main Monster (Boss) - moving, death, control small monsters spawns
 using UnityEngine;
 using System.Collections;
 
-public class BossPotwor : Monster {
+public class FirstMainMonster : Monster {
 	//Sounds
 	public AudioSource jump, death, newMonster, fallingDown;
 	//Lives
 	public int lives;
 	//Monsters
 	public Transform[] monsters;
-	public int numberOfMonsterTypes, numberOfSpawns;
 	public Vector3[] spawns;
 	//Moving control
 	private float movingTime=0.0f, maxMovingTime=20.0f, seeingRange=7.0f;
@@ -33,9 +32,9 @@ public class BossPotwor : Monster {
 	}
 	//Creating new monsters after stroke
 	void CreateMonsters(){
-		for(int i=0;i<numberOfSpawns;i++){
+		for(int i=0;i<spawns.Length;i++){
 			Transform nowy=null;
-			nowy=(Transform)Instantiate(monsters[i%numberOfMonsterTypes],spawns[i] , Quaternion.identity);
+			nowy=(Transform)Instantiate(monsters[i%monsters.Length],spawns[i] , Quaternion.identity);
 			Instantiate(explosionAnimation, spawns[i], Quaternion.identity);
 			//RotationY - parallel to platforms orientation
 			nowy.Rotate(0,90,0,0);
